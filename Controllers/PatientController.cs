@@ -2,8 +2,14 @@
 using BigBang2.Interface;
 using BigBang2.Models;
 using BigBang2.Repository.Interface;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -37,11 +43,22 @@ public class PatientController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutPatient(int id, Patient patient)
+
+    public async Task<IActionResult> PutPatient(int id, [FromForm] Patient patient, IFormFile? imageFile)
     {
         if (id != patient.PatientId)
         {
             return BadRequest();
+        }
+
+        if (imageFile != null && imageFile.Length > 0)
+        {
+            var imageData = await ConvertImageToByteArray(imageFile);
+            patient.PatientImg = imageData;
+        }
+        else
+        {
+            patient.PatientImg = null;
         }
 
         try
@@ -63,21 +80,21 @@ public class PatientController : ControllerBase
         return NoContent();
     }
 
-    [HttpPost]
-    public async Task<ActionResult<Patient>> PostPatient(IFormFile imageFile, [FromForm] Patient patient)
-    {
-        if (imageFile == null || imageFile.Length <= 0)
-        {
-            return BadRequest("Image file is required.");
-        }
 
-        var imageData = await ConvertImageToByteArray(imageFile);
-        patient.PatientImg = imageData;
+    [HttpPost]
+    public async Task<ActionResult<Patient>> PostPatient([FromForm] Patient patient, IFormFile? imageFile)
+    {
+        if (imageFile != null && imageFile.Length > 0)
+        {
+            var imageData = await ConvertImageToByteArray(imageFile);
+            patient.PatientImg = imageData;
+        }
 
         var createdPatient = await _patientRepository.PostPatient(patient);
 
-        return createdPatient.Result;
+        return createdPatient;
     }
+
 
     private async Task<byte[]> ConvertImageToByteArray(IFormFile imageFile)
     {

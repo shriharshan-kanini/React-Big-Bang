@@ -69,7 +69,7 @@ namespace BigBang2.Controllers
 
         // PUT: api/Doctor/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateDoctor(int id, [FromForm] Doctor doctor, IFormFile imageFile)
+        public async Task<IActionResult> UpdateDoctor(int id, [FromForm] Doctor doctor, IFormFile? imageFile)
         {
             if (id != doctor.DocId)
             {
@@ -80,6 +80,11 @@ namespace BigBang2.Controllers
             {
                 var imageData = await ConvertImageToByteArray(imageFile);
                 doctor.DocImg = imageData;
+            }
+
+            else
+            {
+                doctor.DocImg = null;
             }
 
             try
@@ -111,21 +116,20 @@ namespace BigBang2.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Doctor>> PostDoctor(IFormFile imageFile, [FromForm] Doctor doctor)
+        public async Task<ActionResult<Doctor>> PostDoctor(IFormFile? imageFile, [FromForm] Doctor doctor)
         {
-            if (imageFile == null || imageFile.Length <= 0)
+            if (imageFile != null && imageFile.Length > 0)
             {
-                return BadRequest("Image file is required.");
+                var imageData = await ConvertImageToByteArray(imageFile);
+                doctor.DocImg = imageData;
             }
-
-            var imageData = await ConvertImageToByteArray(imageFile);
-            doctor.DocImg = imageData;
 
             await _doctorRepository.Add(doctor);
 
             return CreatedAtAction("GetDoctor", new { id = doctor.DocId }, doctor);
         }
 
+         
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDoctor(int id)
         {

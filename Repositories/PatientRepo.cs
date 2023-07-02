@@ -19,6 +19,9 @@ namespace BigBang2.Repoitory
             return await _context.Patients.Include(x => x.Doctors).ToListAsync();
         }
 
+
+
+
         public async Task<ActionResult<Patient>> GetPatientById(int id)
         {
             var patient = await _context.Patients.FindAsync(id);
