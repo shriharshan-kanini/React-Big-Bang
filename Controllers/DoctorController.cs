@@ -39,20 +39,6 @@ namespace BigBang2.Controllers
             return Ok(doctor);
         }
 
-        [HttpGet("search/active/{isActive}")]
-        public async Task<IActionResult> SearchDoctorsByActiveStatus(bool isActive)
-        {
-            try
-            {
-                var doctors = await _doctorRepository.GetDoctorsByActiveStatus(isActive);
-                return Ok(doctors);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-        }
-
         [HttpGet("search/specialty/{specialty}")]
         public async Task<IActionResult> SearchDoctorsBySpecialty(string specialty)
         {
@@ -116,7 +102,7 @@ namespace BigBang2.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Doctor>> PostDoctor(IFormFile? imageFile, [FromForm] Doctor doctor)
+        public async Task<IActionResult> PostDoctor([FromForm] Doctor doctor, IFormFile? imageFile)
         {
             if (imageFile != null && imageFile.Length > 0)
             {
@@ -124,12 +110,15 @@ namespace BigBang2.Controllers
                 doctor.DocImg = imageData;
             }
 
+            doctor.Status = "Pending";
+
             await _doctorRepository.Add(doctor);
+
+            // Send approval request to the admin
 
             return CreatedAtAction("GetDoctor", new { id = doctor.DocId }, doctor);
         }
 
-         
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDoctor(int id)
         {
@@ -143,5 +132,15 @@ namespace BigBang2.Controllers
 
             return NoContent();
         }
+
+        // GET: api/Doctor/ApprovedDoctors
+        [HttpGet("ApprovedDoctors")]
+        public async Task<ActionResult<IEnumerable<Doctor>>> GetApprovedDoctors()
+        {
+            var approvedDoctors = await _doctorRepository.GetAll();
+            var filteredDoctors = approvedDoctors.Where(d => d.Status == "Approved");
+            return Ok(filteredDoctors);
+        }
+
     }
 }

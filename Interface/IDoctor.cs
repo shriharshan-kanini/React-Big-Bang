@@ -13,7 +13,6 @@ namespace BigBang2.Repository.Interface
         Task Update(T entity);
         Task Delete(T entity);
         Task<bool> Exists(int id);
-        Task<IEnumerable<Doctor>> GetDoctorsByActiveStatus(bool isActive);
         Task<IEnumerable<Doctor>> GetDoctorsBySpecialty(string specialty);
     }
 }

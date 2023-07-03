@@ -44,12 +44,6 @@ namespace BigBang2.Repository
             _context.Doctors.Remove(doctor);
             await _context.SaveChangesAsync();
         }
-        public async Task<IEnumerable<Doctor>> GetDoctorsByActiveStatus(bool isActive)
-        {
-            return await _context.Doctors
-                .Where(d => d.DocActive == isActive)
-                .ToListAsync();
-        }
 
         public async Task<IEnumerable<Doctor>> GetDoctorsBySpecialty(string specialty)
         {
