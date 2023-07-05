@@ -2,6 +2,7 @@
 using BigBang2.Interface;
 using BigBang2.Models;
 using BigBang2.Repository.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
+//[Authorize]
 [Route("api/[controller]")]
 [ApiController]
 public class PatientController : ControllerBase
@@ -22,6 +24,7 @@ public class PatientController : ControllerBase
         _patientRepository = patientRepository;
     }
 
+    //[Authorize(Roles =("Admin,Patient,Doctor"))]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Patient>>> GetPatients()
     {
@@ -42,6 +45,7 @@ public class PatientController : ControllerBase
         return Ok(patient);
     }
 
+    //[Authorize(Roles = ("Admin,Patient"))]
     [HttpPut("{id}")]
 
     public async Task<IActionResult> PutPatient(int id, [FromForm] Patient patient, IFormFile? imageFile)

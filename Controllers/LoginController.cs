@@ -13,6 +13,7 @@ using BigBang2.Models;
 
 namespace RealEstate2.Controllers
 {
+    
     [Route("api/[controller]")]
     [ApiController]
     public class LoginController : ControllerBase

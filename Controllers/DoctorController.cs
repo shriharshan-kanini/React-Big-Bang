@@ -2,12 +2,14 @@
 // DoctorController.cs
 using BigBang2.Models;
 using BigBang2.Repository.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 
 namespace BigBang2.Controllers
 {
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class DoctorController : ControllerBase
@@ -19,6 +21,7 @@ namespace BigBang2.Controllers
             _doctorRepository = doctorRepository;
         }
 
+        //[Authorize(Roles = ("Admin,Patient,Doctor"))]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Doctor>>> GetDoctors()
         {
@@ -53,6 +56,7 @@ namespace BigBang2.Controllers
             }
         }
 
+        //[Authorize(Roles = ("Admin,Doctor"))]
         // PUT: api/Doctor/5
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateDoctor(int id, [FromForm] Doctor doctor, IFormFile? imageFile)
@@ -67,12 +71,6 @@ namespace BigBang2.Controllers
                 var imageData = await ConvertImageToByteArray(imageFile);
                 doctor.DocImg = imageData;
             }
-
-            else
-            {
-                doctor.DocImg = null;
-            }
-
             try
             {
                 await _doctorRepository.Update(doctor);
@@ -101,6 +99,7 @@ namespace BigBang2.Controllers
             }
         }
 
+       // [Authorize(Roles = ("Admin,Doctor"))]
         [HttpPost]
         public async Task<IActionResult> PostDoctor([FromForm] Doctor doctor, IFormFile? imageFile)
         {

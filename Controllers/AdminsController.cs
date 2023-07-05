@@ -6,11 +6,15 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BigBang2.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BigBangReact2.Controllers
 {
+    //[Authorize]
+
     [Route("api/[controller]")]
     [ApiController]
+
     public class AdminsController : ControllerBase
     {
         private readonly HospitalContext _context;
