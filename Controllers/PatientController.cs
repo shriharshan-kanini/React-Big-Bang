@@ -12,7 +12,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-//[Authorize]
 [Route("api/[controller]")]
 [ApiController]
 public class PatientController : ControllerBase

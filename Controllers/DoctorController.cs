@@ -9,7 +9,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BigBang2.Controllers
 {
-    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class DoctorController : ControllerBase

@@ -10,8 +10,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace BigBangReact2.Controllers
 {
-    //[Authorize]
-
     [Route("api/[controller]")]
     [ApiController]
 
